@@ -15,7 +15,7 @@ const transporter = nodemailer.createTransport(mg(mailgunAuth));
 transporter.sendMail(
   {
     from: "Quiz App <no-reply@" + process.env.MAILGUN_DOMAIN + ">",
-    to: "your_email@example.com",
+    to: "uchral.enkh@gmail.com",
     subject: "Test Email",
     text: "Hello! This is a test from Mailgun.",
   },
@@ -24,3 +24,4 @@ transporter.sendMail(
     else console.log(info);
   }
 );
+
