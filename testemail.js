@@ -12,8 +12,13 @@ const transporter = nodemailer.createTransport({
   debug: true
 });
 
-transporter.verify((err, success) => {
-  if (err) console.error("❌ SMTP Error:", err);
-  else console.log("✅ SMTP connection works!");
+transporter.sendMail({
+  from: `"Test" <${process.env.EMAIL_USER}>`,
+  to: process.env.EMAIL_USER,
+  subject: "SMTP Test",
+  text: "Hello from NodeMailer!"
+}, (err, info) => {
+  if (err) console.error("❌ Error sending email:", err);
+  else console.log("✅ Email sent:", info.response);
 });
 
