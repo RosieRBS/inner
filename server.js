@@ -1,10 +1,10 @@
 import express from "express";
-import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
-
+import formData from "form-data";
+import Mailgun from "mailgun.js";
 
 // ---------------------------
 // Setup
@@ -22,14 +22,13 @@ const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname)));
 
 // ---------------------------
-// Email transporter
+// Email transporter (Mailgun)
 // ---------------------------
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS, // Gmail App Password
-  },
+const mailgun = new Mailgun(formData);
+const mg = mailgun.client({
+  username: "api",
+  key: process.env.MAILGUN_API_KEY,
+  url: "https://api.mailgun.net",
 });
 
 // ---------------------------
@@ -73,14 +72,15 @@ app.post("/send-results", async (req, res) => {
       interpretation =
         "Танд сэтгэлзүйн болон бие махбодийн шинж тэмдэг бараг ажиглагдахгүй байна. Та эрүүл хэв маягтай байна.";
     }
-  } 
+  }
+
   const subject = `hellooooo ${testType} Results Are Ready 🎉`;
   const text = `Hi there!\n\nThank you for taking the "${testType}".\n\nYour score: ${score}/150\n\n ${interpretation}\n\nWe hope this helps you!`;
 
   try {
-    await transporter.sendMail({
-      from: `"Quiz App" <${process.env.EMAIL_USER}>`,
-      to: email,
+    await mg.messages.create(process.env.MAILGUN_DOMAIN, {
+      from: `Quiz App <mailgun@${process.env.MAILGUN_DOMAIN}>`,
+      to: [email],
       subject,
       text,
     });
@@ -96,10 +96,7 @@ app.post("/send-results", async (req, res) => {
 // ---------------------------
 // Start server
 // ---------------------------
-
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
 });
-
-
