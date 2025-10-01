@@ -1,24 +1,26 @@
 import nodemailer from "nodemailer";
+import mg from "nodemailer-mailgun-transport";
 import dotenv from "dotenv";
 dotenv.config();
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
+const mailgunAuth = {
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    api_key: process.env.MAILGUN_API_KEY,
+    domain: process.env.MAILGUN_DOMAIN,
   },
-  logger: true,
-  debug: true
-});
+};
 
-transporter.sendMail({
-  from: `"Test" <${process.env.EMAIL_USER}>`,
-  to: process.env.EMAIL_USER,
-  subject: "SMTP Test",
-  text: "Hello from NodeMailer!"
-}, (err, info) => {
-  if (err) console.error("❌ Error sending email:", err);
-  else console.log("✅ Email sent:", info.response);
-});
+const transporter = nodemailer.createTransport(mg(mailgunAuth));
 
+transporter.sendMail(
+  {
+    from: "Quiz App <no-reply@" + process.env.MAILGUN_DOMAIN + ">",
+    to: "your_email@example.com",
+    subject: "Test Email",
+    text: "Hello! This is a test from Mailgun.",
+  },
+  (err, info) => {
+    if (err) console.error(err);
+    else console.log(info);
+  }
+);
