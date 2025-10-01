@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Relate-Inspired Quiz</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="quiz-container">
+
+    <!-- Start Card -->
+    <div class="card" id="startCard">
+      <h2>🧠 Welcome to the Quiz Portal</h2>
+      <p>Choose which test you’d like to take:</p>
+      <div class="start-buttons">
+        <button class="btn" id="startTest1">Start Relationship Test</button>
+        <button class="btn" id="startTest2">Start Personality Test</button>
+      </div>
+    </div>
+
+    <!-- Quiz Card -->
+    <div class="card hidden" id="quizCard">
+
+      <!-- Section card -->
+      <div id="sectionCard" class="hidden">
+        <h2 id="sectionTitle"></h2>
+        <p id="sectionDescription"></p>
+        <button id="continueBtn" class="btn">Continue</button>
+      </div>
+
+      <!-- Questions container -->
+      <div id="questionContainer">
+        <div class="progress">
+          <div id="progressText">Question 1 of 10</div>
+          <div class="progress-bar">
+            <div id="progressFill"></div>
+          </div>
+        </div>
+
+        <h2 id="questionText">Loading...</h2>
+        <p id="reminderText" class="reminder">Choose the option closest to you</p>
+
+        <div id="choices" class="choices"></div>
+
+        <div class="actions">
+          <button id="prevBtn" class="btn-ghost" disabled>Previous</button>
+          <button id="nextBtn" class="btn" disabled>Next</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Result Card -->
+    <div class="card hidden" id="resultCard">
+      <h2>Your results are in 🎉</h2>
+      <p>Your result is ready. We’ll send it to your email so only you can see it.</p>
+      
+      <form id="emailForm">
+        <input type="email" id="emailInput" placeholder="Enter your email" required />
+        <button type="submit" class="btn">Get My Results</button>
+      </form>
+      
+      <p id="emailMessage" class="footer-text"></p>
+    </div>
+
+    <!-- Footer Section -->
+    <div class="card-footer">
+      <p class="footer-text">
+        This test helps you understand your relationship patterns and communication style.
+      </p>
+    
+      <div class="social-icons">
+        <a href="https://www.facebook.com/e.khaliun" target="_blank" rel="noopener">
+          <img src="icons/fb.png" alt="Facebook" />
+        </a>
+        <a href="https://www.instagram.com/bluelady_mg/" target="_blank" rel="noopener">
+          <img src="icons/insta.png" alt="Instagram" />
+        </a>
+      </div>
+      <p class="footer-text">© 2025 R.E.L.A.T.E — Бүтээсэн: eetneb.dev</p>
+    </div>
+
+  </main>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
