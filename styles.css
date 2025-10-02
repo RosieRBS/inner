@@ -85,7 +85,7 @@ h2 { margin: 0 0 1rem; }
 }
 
 .logo {
-    height: 50px;
+    height: 100px;
     width: auto;
     cursor: pointer;
     transition: transform 0.2s ease;
@@ -94,4 +94,5 @@ h2 { margin: 0 0 1rem; }
 .logo:hover {
     transform: scale(1.05);
 }
+
 
