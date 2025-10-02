@@ -77,3 +77,21 @@ h2 { margin: 0 0 1rem; }
     .quiz-container { padding:1rem; }
     .choices { padding-left:0; }
 }
+
+.logo-header {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+}
+
+.logo {
+    height: 50px;
+    width: auto;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.logo:hover {
+    transform: scale(1.05);
+}
+
