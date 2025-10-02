@@ -678,7 +678,7 @@ function showResult(){
     }
 
     try{
-      const res = await fetch("http://localhost:3000/send-results",{
+      const res = await fetch("/send-results",{
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body: JSON.stringify({ email, score: answers.reduce((a,b)=>a+b,0), testType })
@@ -698,3 +698,4 @@ function showResult(){
     }
   });
 }
+
