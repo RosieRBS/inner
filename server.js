@@ -28,7 +28,7 @@ const mailgun = new Mailgun(formData);
 const mg = mailgun.client({
   username: "api",
   key: process.env.MAILGUN_API_KEY,
-  url: "https://api.mailgun.net",
+  url: "https://api.eu.mailgun.net",
 });
 
 // ---------------------------
@@ -79,7 +79,7 @@ app.post("/send-results", async (req, res) => {
 
   try {
     await mg.messages.create(process.env.MAILGUN_DOMAIN, {
-      from: `Quiz App <mailgun@${process.env.MAILGUN_DOMAIN}>`,
+      from: `Quiz App <pstmaster@${process.env.MAILGUN_DOMAIN}>`,
       to: [email],
       subject,
       text,
@@ -100,3 +100,4 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
 });
+
