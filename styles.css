@@ -95,4 +95,65 @@ h2 { margin: 0 0 1rem; }
     transform: scale(1.05);
 }
 
+/* =============== */
+/* QPAY POPUP STYLES */
+/* =============== */
+
+.qr-popup {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease;
+}
+
+.qr-box {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  padding: 2rem;
+  max-width: 340px;
+  width: 90%;
+  text-align: center;
+  animation: slideUp 0.4s ease;
+}
+
+.qr-box h3 {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.qr-box p {
+  color: #555;
+  margin-bottom: 1rem;
+}
+
+.qr-box img {
+  width: 220px;
+  height: 220px;
+  border-radius: 8px;
+  object-fit: contain;
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
+}
+
+.qr-box button {
+  margin-top: 0.5rem;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+
 
