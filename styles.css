@@ -39,7 +39,32 @@ body {
     transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
+
 .hidden { display: none; }
+
+.test-selection {
+    margin: 1.5rem 0;
+    text-align: center;
+}
+
+#testDropdown {
+    width: 100%;
+    max-width: 400px;
+    padding: 0.6rem 1rem;
+    border-radius: 10px;
+    border: 1px solid rgba(82,82,82,0.2);
+    background: rgba(255,255,255,0.9);
+    font-size: 1rem;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#testDropdown:focus {
+    border-color: var(--accent);
+    outline: none;
+}
+
 
 .start-buttons { display: flex; justify-content: center; gap: 1rem; margin-top: 1rem; }
 
@@ -139,3 +164,4 @@ h2 { margin: 0 0 1rem; }
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
