@@ -1,8 +1,11 @@
 // ---------------------------
 // DOM references
 // ---------------------------
-const startTest1Btn = document.getElementById("startTest1");
-const startTest2Btn = document.getElementById("startTest2");
+// const startTest1Btn = document.getElementById("startTest1");
+// const startTest2Btn = document.getElementById("startTest2");
+const testDropdown = document.getElementById('testDropdown');
+const startSelectedTest = document.getElementById('startSelectedTest');
+
 const startCard = document.getElementById("startCard");
 const quizCard = document.getElementById("quizCard");
 const resultCard = document.getElementById("resultCard");
@@ -547,29 +550,27 @@ let score = 0;
 //   sections = sectionsTest2;
 //   startQuiz();
 // });
-const testDropdown = document.createElement("select");
-testDropdown.id = "testDropdown";
-testDropdown.innerHTML = `
-  <option value="">-- Сонгох Тест --</option>
-  <option value=sectionsTest1>ТОКСИК ЗАН ТӨЛӨВИЙГ ТОДОРХОЙЛОХ ТЕСТ</option>
-  <option value="ectionsTest2>СТРЕССИЙГ ТОДОРХОЙЛОХ ТЕСТ</option>
-`;
 
-const startButtonsDiv = document.querySelector(".start-buttons");
-startButtonsDiv.innerHTML = ""; // remove old buttons
-startButtonsDiv.appendChild(testDropdown);
+testDropdown.addEventListener('change', () => {
+    sections = testDropdown.value;
+    startSelectedTest.disabled = !selectedTest;
+});
+startSelectedTest.addEventListener('click', () => {
+    if (!selectedTest) return;
 
-const startBtn = document.createElement("button");
-startBtn.className = "btn";
-startBtn.textContent = "🧠 Start Test";
-startButtonsDiv.appendChild(startBtn);
+    // You can keep your logic to show sectionCard or quizCard based on the test
+    //startCard.classList.add('hidden');
 
-startBtn.addEventListener("click", () => {
-  sections = testDropdown.value;
-  if (!selected) {
-    alert("Please select a test");
-    return;
-  }
+    // Example logic:
+    // currentTest = selectedTest; // global variable to track which test
+    // if (testHasIntro(currentTest)) {
+    //     sectionCard.classList.remove('hidden');
+    //     sectionTitle.textContent = getTestTitle(currentTest);
+    //     sectionDescription.textContent = getTestDescription(currentTest);
+    // } else {
+    //     quizCard.classList.remove('hidden');
+    //     loadQuestions(currentTest);
+    // }
   startQuiz();
 });
 
@@ -826,6 +827,7 @@ function showResult(){
 });
 
 }
+
 
 
 
