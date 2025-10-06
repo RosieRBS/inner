@@ -551,8 +551,8 @@ const testDropdown = document.createElement("select");
 testDropdown.id = "testDropdown";
 testDropdown.innerHTML = `
   <option value="">-- Сонгох Тест --</option>
-  <option value="sectionsTest1">ТОКСИК ЗАН ТӨЛӨВИЙГ ТОДОРХОЙЛОХ ТЕСТ</option>
-  <option value="sectionsTest2">СТРЕССИЙГ ТОДОРХОЙЛОХ ТЕСТ</option>
+  <option value=sectionsTest1>ТОКСИК ЗАН ТӨЛӨВИЙГ ТОДОРХОЙЛОХ ТЕСТ</option>
+  <option value="ectionsTest2>СТРЕССИЙГ ТОДОРХОЙЛОХ ТЕСТ</option>
 `;
 
 const startButtonsDiv = document.querySelector(".start-buttons");
@@ -565,14 +565,12 @@ startBtn.textContent = "🧠 Start Test";
 startButtonsDiv.appendChild(startBtn);
 
 startBtn.addEventListener("click", () => {
-  const sections = testDropdown.value;
+  sections = testDropdown.value;
   if (!selected) {
     alert("Please select a test");
     return;
   }
-  else{
-    startQuiz();
-  }
+  startQuiz();
 });
 
 
@@ -828,6 +826,7 @@ function showResult(){
 });
 
 }
+
 
 
 
