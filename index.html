@@ -18,14 +18,25 @@
   <main class="quiz-container">
 
     <!-- Start Card -->
-    <div class="card" id="startCard">
-      <h2>🧠 Welcome to the Quiz Portal</h2>
-      <p>Choose which test you’d like to take:</p>
-      <div class="start-buttons">
-        <button class="btn" id="startTest1">ТОКСИК ЗАН ТӨЛӨВИЙГ ТОДОРХОЙЛОХ ТЕСТ</button>
-        <button class="btn" id="startTest2">СТРЕССИЙГ ТОДОРХОЙЛОХ ТЕСТ</button>
-      </div>
-    </div>
+    <!-- Start Card -->
+<div class="card" id="startCard">
+  <h2>🧠 Welcome to the Quiz Portal</h2>
+  <p>Please select a test you’d like to take from the menu below:</p>
+
+  <div class="test-selection">
+    <select id="testDropdown">
+      <option value="" disabled selected>Select your test</option>
+      <option value="test1">ТОКСИК ЗАН ТӨЛӨВИЙГ ТОДОРХОЙЛОХ ТЕСТ</option>
+      <option value="test2">СТРЕССИЙГ ТОДОРХОЙЛОХ ТЕСТ</option>
+      <!-- Add more tests here as needed -->
+    </select>
+  </div>
+
+  <div class="start-buttons">
+    <button class="btn" id="startSelectedTest" disabled>Start Test</button>
+  </div>
+</div>
+
 
     <!-- Quiz Card -->
     <div class="card hidden" id="quizCard">
@@ -93,3 +104,4 @@
   <script src="script.js" defer></script>
 </body>
 </html>
+
