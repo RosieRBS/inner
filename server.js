@@ -5,6 +5,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import formData from "form-data";
 import Mailgun from "mailgun.js";
+import fetch from "node-fetch"; // ✅ needed for QPay API calls
 
 // ---------------------------
 // Setup
@@ -32,7 +33,83 @@ const mg = mailgun.client({
 });
 
 // ---------------------------
-// POST endpoint to send results
+// 🔹 QPay Integration
+// ---------------------------
+
+// Get QPay token (merchant auth)
+async function getQPayToken() {
+  const response = await fetch("https://merchant-sandbox.qpay.mn/v2/auth/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      username: process.env.QPAY_USERNAME,
+      password: process.env.QPAY_PASSWORD,
+    }),
+  });
+  const data = await response.json();
+  return data.access_token;
+}
+
+// Create invoice
+app.post("/create-invoice", async (req, res) => {
+  try {
+    const { amount, email, testType } = req.body;
+    const token = await getQPayToken();
+
+    const invoiceRes = await fetch("https://merchant-sandbox.qpay.mn/v2/invoice", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        invoice_code: process.env.QPAY_INVOICE_CODE, // e.g. TEST_INVOICE
+        sender_invoice_no: `INV-${Date.now()}`,
+        invoice_receiver_code: email,
+        invoice_description: `Payment for ${testType}`,
+        amount: amount || 1000, // change if needed
+        callback_url: "https://inner.mn/payment-callback", // optional
+      }),
+    });
+
+    const data = await invoiceRes.json();
+    if (!invoiceRes.ok) throw new Error(data.detail || "Failed to create invoice");
+
+    res.json({
+  success: true,
+  qrImage: `data:image/png;base64,${data.qr_image}`,
+  invoice_id: data.invoice_id,
+});
+
+  } catch (err) {
+    console.error("❌ QPay invoice error:", err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// Check payment status
+app.get("/check-invoice/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const token = await getQPayToken();
+
+    const checkRes = await fetch(`https://merchant-sandbox.qpay.mn/v2/payment/check/${id}`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    const data = await checkRes.json();
+    if (!checkRes.ok) throw new Error(data.detail || "Failed to check invoice");
+
+    res.json({ success: true, paid: data.paid_amount >= data.amount });
+  } catch (err) {
+    console.error("❌ QPay check error:", err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// ---------------------------
+// Existing: POST /send-results
 // ---------------------------
 app.post("/send-results", async (req, res) => {
   const { email, score, testType } = req.body;
@@ -42,44 +119,43 @@ app.post("/send-results", async (req, res) => {
     return res.status(400).json({ success: false, message: "Invalid input" });
   }
 
+  // Interpret result
   if (testType === "ТОКСИК ЗАН ТӨЛӨВИЙГ ТОДОРХОЙЛОХ ТЕСТ") {
     if (score >= 121) {
       interpretation =
-        "Таны харилцаанд токсик зан төлөв маш тод илэрч байна. Хяналт тавих, бусдыг манипуляци хийх, байнга буруутгах, уур бухимдалтай байх зэрэг нь таны харилцааг ноцтойгоор хордуулж байна. Энэ нь таны хувийн амьдрал болон ойр дотны хүмүүст тань сөргөөр нөлөөлж байгаа тул мэргэжлийн сэтгэл зүйчийн тусламж авахыг зөвлөж байна.";
+        "Таны харилцаанд токсик зан төлөв маш тод илэрч байна...";
     } else if (score >= 91 && score <= 120) {
       interpretation =
-        "Таны харилцаанд токсик зан төлөвийн шинж тэмдэг нэлээд их байна. Бусдыг удирдах, шүүмжлэх, сэтгэл санааны хувьд дарамтлах, хариуцлагаас зайлсхийх зэрэг асуудлууд гарч болзошгүй. Эдгээр зан төлөв нь таны хувийн болон бусдын амьдралд сөргөөр нөлөөлж байна.";
+        "Таны харилцаанд токсик зан төлөвийн шинж тэмдэг нэлээд их байна...";
     } else if (score >= 61 && score <= 90) {
       interpretation =
-        "Таны харилцаанд токсик зан төлөвийн зарим шинж тэмдэг ажиглагдаж магадгүй. Заримдаа хянах, шүүмжлэх, эсвэл бусдын мэдрэмжийг үл тоомсорлох зэрэг байдал илэрч болно. Өөрийн харилцааны хэв маягийг сайжруулахад анхаарвал зохино.";
+        "Таны харилцаанд токсик зан төлөвийн зарим шинж тэмдэг ажиглагдаж магадгүй...";
     } else {
       interpretation =
-        "Таны харилцаанд токсик зан төлөвийн шинж тэмдэг маш бага эсвэл огт байхгүй. Та бусадтай эрүүл, эерэг харилцааг бий болгохыг эрмэлздэг.";
+        "Таны харилцаанд токсик зан төлөвийн шинж тэмдэг маш бага эсвэл огт байхгүй...";
     }
-  } 
-  
-  else if (testType === "СТРЕССИЙГ ТОДОРХОЙЛОХ ТЕСТ") {
+  } else if (testType === "СТРЕССИЙГ ТОДОРХОЙЛОХ ТЕСТ") {
     if (score >= 121) {
       interpretation =
-        "Таны сэтгэлзүйн болон бие махбодийн шинж тэмдэг маш тод илэрч байна. Та яаралтай мэргэжлийн тусламж авахыг зөвлөж байна.";
+        "Таны сэтгэлзүйн болон бие махбодийн шинж тэмдэг маш тод илэрч байна...";
     } else if (score >= 91 && score <= 120) {
       interpretation =
-        "Танд тодорхой сэтгэлзүйн болон бие махбодийн шинж тэмдэг илэрч байна. Энэ нь таны амьдралд нөлөөлж байгаа бол сэтгэлзүйчтэй уулзах хэрэгтэй.";
+        "Танд тодорхой сэтгэлзүйн болон бие махбодийн шинж тэмдэг илэрч байна...";
     } else if (score >= 61 && score <= 90) {
       interpretation =
-        "Танд зарим шинж тэмдэг ажиглагдаж магадгүй. Стресс удирдах, амралт авах, эрүүл зуршлыг хэвшүүлэхэд анхаараарай.";
+        "Танд зарим шинж тэмдэг ажиглагдаж магадгүй...";
     } else {
       interpretation =
-        "Танд сэтгэлзүйн болон бие махбодийн шинж тэмдэг бараг ажиглагдахгүй байна. Та эрүүл хэв маягтай байна.";
+        "Танд сэтгэлзүйн болон бие махбодийн шинж тэмдэг бараг ажиглагдахгүй байна...";
     }
   }
 
-  const subject = `hellooooo ${testType} Results Are Ready 🎉`;
-  const text = `Hi there!\n\nThank you for taking the "${testType}".\n\nYour score: ${score}/150\n\n ${interpretation}\n\nWe hope this helps you!`;
+  const subject = `${testType} — Таны үр дүн 🎉`;
+  const text = `Сайн байна уу!\n\n"${testType}" тестийн таны оноо: ${score}/150\n\n${interpretation}\n\nINNER.mn баг`;
 
   try {
     await mg.messages.create(process.env.MAILGUN_DOMAIN, {
-      from: `Quiz App <pstmaster@${process.env.MAILGUN_DOMAIN}>`,
+      from: `INNER <postmaster@${process.env.MAILGUN_DOMAIN}>`,
       to: [email],
       subject,
       text,
@@ -100,4 +176,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
 });
-
