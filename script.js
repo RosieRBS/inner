@@ -651,6 +651,54 @@ function loadQuestion() {
 // ---------------------------
 // Show result / email form
 // ---------------------------
+// function showResult(){
+//   quizCard.classList.add("hidden");
+//   resultCard.classList.remove("hidden");
+//   resultCard.innerHTML = `
+//     <h2>Your results are in</h2>
+//     <p>Your result is ready. We’ll send it to you by email so only you can see it.</p>
+//     <form id="emailForm">
+//       <input type="email" id="emailInput" placeholder="Enter your email" required />
+//       <button type="submit" class="btn">Submit</button>
+//     </form>
+//     <p id="emailMessage"></p>
+//   `;
+
+//   const emailForm = document.getElementById("emailForm");
+//   const emailInput = document.getElementById("emailInput");
+//   const emailMessage = document.getElementById("emailMessage");
+
+//   emailForm.addEventListener("submit", async (e)=>{
+//     e.preventDefault();
+//     const email = emailInput.value.trim();
+//     if(!/^\S+@\S+\.\S+$/.test(email)){
+//       emailMessage.textContent="❌ Please enter a valid email.";
+//       emailMessage.style.color="red";
+//       return;
+//     }
+
+//     try{
+//       const res = await fetch("/send-results",{
+//         method:"POST",
+//         headers:{"Content-Type":"application/json"},
+//         body: JSON.stringify({ email, score: answers.reduce((a,b)=>a+b,0), testType })
+//       });
+//       const data = await res.json();
+//       if(data.success){
+//         emailMessage.textContent="✅ Your results have been sent!";
+//         emailMessage.style.color="green";
+//         emailForm.reset();
+//       } else {
+//         throw new Error(data.message || "Server error");
+//       }
+//     }catch(err){
+//       console.error(err);
+//       emailMessage.textContent="❌ Failed to send results. Try again.";
+//       emailMessage.style.color="red";
+//     }
+//   });
+// }
+
 function showResult(){
   quizCard.classList.add("hidden");
   resultCard.classList.remove("hidden");
@@ -668,34 +716,90 @@ function showResult(){
   const emailInput = document.getElementById("emailInput");
   const emailMessage = document.getElementById("emailMessage");
 
-  emailForm.addEventListener("submit", async (e)=>{
-    e.preventDefault();
-    const email = emailInput.value.trim();
-    if(!/^\S+@\S+\.\S+$/.test(email)){
-      emailMessage.textContent="❌ Please enter a valid email.";
-      emailMessage.style.color="red";
-      return;
-    }
+ emailForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const email = emailInput.value.trim();
 
-    try{
-      const res = await fetch("/send-results",{
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({ email, score: answers.reduce((a,b)=>a+b,0), testType })
-      });
-      const data = await res.json();
-      if(data.success){
-        emailMessage.textContent="✅ Your results have been sent!";
-        emailMessage.style.color="green";
-        emailForm.reset();
-      } else {
-        throw new Error(data.message || "Server error");
+  if (!/^\S+@\S+\.\S+$/.test(email)) {
+    emailMessage.textContent = "❌ Please enter a valid email.";
+    emailMessage.style.color = "red";
+    return;
+  }
+
+  // Step 1: create invoice
+  emailMessage.textContent = "⏳ Creating payment invoice...";
+  emailMessage.style.color = "black";
+
+  try {
+    const res = await fetch("/create-invoice", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email,
+        amount: 4900, // your price in MNT
+        testType,
+      }),
+    });
+
+    const data = await res.json();
+    if (!data.success) throw new Error(data.message);
+
+    // Step 2: show QR code popup
+    const qrPopup = document.createElement("div");
+    qrPopup.className = "qr-popup";
+    qrPopup.innerHTML = `
+      <div class="qr-box">
+        <h3>💳 Pay with QPay</h3>
+        <p>Scan this QR code using your bank app.</p>
+        <img src="${data.qrImage}" alt="QPay QR Code" />
+        <p>Invoice ID: ${data.invoice_id}</p>
+        <button id="cancelPay" class="btn-ghost">Cancel</button>
+      </div>
+    `;
+    document.body.appendChild(qrPopup);
+
+    const cancelBtn = document.getElementById("cancelPay");
+    cancelBtn.addEventListener("click", () => qrPopup.remove());
+
+    // Step 3: Poll every 5s to check payment
+    const checkPayment = setInterval(async () => {
+      const check = await fetch(`/check-invoice/${data.invoice_id}`);
+      const status = await check.json();
+
+      if (status.paid) {
+        clearInterval(checkPayment);
+        qrPopup.remove();
+        emailMessage.textContent = "✅ Payment confirmed! Sending your results...";
+        emailMessage.style.color = "green";
+
+        // Step 4: Send results after payment
+        const send = await fetch("/send-results", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email,
+            score: answers.reduce((a, b) => a + b, 0),
+            testType,
+          }),
+        });
+
+        const result = await send.json();
+        if (result.success) {
+          emailMessage.textContent = "🎉 Your results have been sent!";
+        } else {
+          emailMessage.textContent = "❌ Payment ok, but failed to send email.";
+        }
       }
-    }catch(err){
-      console.error(err);
-      emailMessage.textContent="❌ Failed to send results. Try again.";
-      emailMessage.style.color="red";
-    }
-  });
+    }, 5000);
+  } catch (err) {
+    console.error(err);
+    emailMessage.textContent = "❌ Failed to create payment. Try again.";
+    emailMessage.style.color = "red";
+  }
+});
+
 }
+
+
+
 
