@@ -73,7 +73,11 @@ app.post("/create-invoice", async (req, res) => {
     });
 
     const data = await invoiceRes.json();
-    if (!invoiceRes.ok) throw new Error(data.detail || "Failed to create invoice");
+    if (!invoiceRes.ok) {
+  console.error("❌ QPay API error:", data);
+  throw new Error(data.detail || JSON.stringify(data) || "Failed to create invoice");
+}
+
 
     res.json({
   success: true,
@@ -176,3 +180,4 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
 });
+
