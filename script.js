@@ -536,17 +536,44 @@ let score = 0;
 // ---------------------------
 // Start quiz handlers
 // ---------------------------
-startTest1Btn.addEventListener("click", () => {
-  testType = "ТОКСИК ЗАН ТӨЛӨВИЙГ ТОДОРХОЙЛОХ ТЕСТ";
-  sections = sectionsTest1;
-  startQuiz();
+// startTest1Btn.addEventListener("click", () => {
+//   testType = "ТОКСИК ЗАН ТӨЛӨВИЙГ ТОДОРХОЙЛОХ ТЕСТ";
+//   sections = sectionsTest1;
+//   startQuiz();
+// });
+
+// startTest2Btn.addEventListener("click", () => {
+//   testType = "СТРЕССИЙГ ТОДОРХОЙЛОХ ТЕСТ";
+//   sections = sectionsTest2;
+//   startQuiz();
+// });
+const testDropdown = document.createElement("select");
+testDropdown.id = "testDropdown";
+testDropdown.innerHTML = `
+  <option value="">-- Сонгох Тест --</option>
+  <option value="sectionsTest1">ТОКСИК ЗАН ТӨЛӨВИЙГ ТОДОРХОЙЛОХ ТЕСТ</option>
+  <option value="sectionsTest2">СТРЕССИЙГ ТОДОРХОЙЛОХ ТЕСТ</option>
+`;
+
+const startButtonsDiv = document.querySelector(".start-buttons");
+startButtonsDiv.innerHTML = ""; // remove old buttons
+startButtonsDiv.appendChild(testDropdown);
+
+const startBtn = document.createElement("button");
+startBtn.className = "btn";
+startBtn.textContent = "🧠 Start Test";
+startButtonsDiv.appendChild(startBtn);
+
+startBtn.addEventListener("click", () => {
+  const sections = testDropdown.value;
+  if (!selected) {
+    alert("Please select a test");
+    return;
+  }
+  
 });
 
-startTest2Btn.addEventListener("click", () => {
-  testType = "СТРЕССИЙГ ТОДОРХОЙЛОХ ТЕСТ";
-  sections = sectionsTest2;
-  startQuiz();
-});
+
 
 function startQuiz() {
   startCard.classList.add("hidden");
@@ -799,6 +826,7 @@ function showResult(){
 });
 
 }
+
 
 
 
