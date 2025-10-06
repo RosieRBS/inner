@@ -530,7 +530,7 @@ const sectionsTest2 = [
 // State
 // ---------------------------
 let testType = "";
-let sections = [];
+let sections = null;
 let currentSection = 0;
 let currentQuestion = 0;
 let answers = [];
@@ -554,9 +554,10 @@ let score = 0;
 testDropdown.addEventListener('change', () => {
     sections = testDropdown.value;
     startSelectedTest.disabled = !sections;
+    testtype = testDropdown.value;
 });
 startSelectedTest.addEventListener('click', () => {
-    if (!sections) return;
+    //if (!sections) return;
 
     // You can keep your logic to show sectionCard or quizCard based on the test
     //startCard.classList.add('hidden');
@@ -827,6 +828,7 @@ function showResult(){
 });
 
 }
+
 
 
 
