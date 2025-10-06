@@ -570,7 +570,9 @@ startBtn.addEventListener("click", () => {
     alert("Please select a test");
     return;
   }
-  
+  else{
+    startQuiz();
+  }
 });
 
 
@@ -826,6 +828,7 @@ function showResult(){
 });
 
 }
+
 
 
 
