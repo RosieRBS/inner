@@ -37,18 +37,37 @@ const mg = mailgun.client({
 // ---------------------------
 
 // Get QPay token (merchant auth)
+// async function getQPayToken() {
+//   const response = await fetch("https://merchant-sandbox.qpay.mn/v2/auth/token", {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify({
+//       username: process.env.QPAY_USERNAME,
+//       password: process.env.QPAY_PASSWORD,
+//     }),
+//   });
+//   const data = await response.json();
+//   return data.access_token;
+// }
+
 async function getQPayToken() {
+  const basicAuth = Buffer.from(
+    `${process.env.QPAY_USERNAME}:${process.env.QPAY_PASSWORD}`
+  ).toString("base64");
+
   const response = await fetch("https://merchant-sandbox.qpay.mn/v2/auth/token", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      username: process.env.QPAY_USERNAME,
-      password: process.env.QPAY_PASSWORD,
-    }),
+    headers: {
+      Authorization: `Basic ${basicAuth}`,
+      "Content-Type": "application/json",
+    },
   });
+
   const data = await response.json();
+  if (!response.ok) throw new Error(data.error || "Failed to get token");
   return data.access_token;
 }
+
 
 // Create invoice
 app.post("/create-invoice", async (req, res) => {
@@ -180,4 +199,5 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
 });
+
 
