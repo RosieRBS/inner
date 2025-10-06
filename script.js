@@ -553,10 +553,10 @@ let score = 0;
 
 testDropdown.addEventListener('change', () => {
     sections = testDropdown.value;
-    startSelectedTest.disabled = !selectedTest;
+    startSelectedTest.disabled = !sections;
 });
 startSelectedTest.addEventListener('click', () => {
-    if (!selectedTest) return;
+    if (!sections) return;
 
     // You can keep your logic to show sectionCard or quizCard based on the test
     //startCard.classList.add('hidden');
@@ -827,6 +827,7 @@ function showResult(){
 });
 
 }
+
 
 
 
