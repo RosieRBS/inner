@@ -745,8 +745,9 @@ export const sectionsTest3 = [
       { text: "Заримдаа / Дунд зэрэг", value: 3 },
       { text: "Ихэвчлэн / Байнга", value: 4 },
       { text: "Үргэлж / Тийм ээ, яг тийм", value: 5 }
-    ] }
-  ]
-}
+      ] }
+    ]
+  }
+];
 
 
