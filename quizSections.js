@@ -1,4 +1,4 @@
-const sectionsTest1 = [
+export const sectionsTest1 = [
   {
     title: "I хэсэг: Бусдыг хянах, удирдах хандлага",
     description: "...",
@@ -248,7 +248,7 @@ const sectionsTest1 = [
     ]
   }
 ];
-const sectionsTest2 = [
+export const sectionsTest2 = [
   {
     title: "I хэсэг: Сэтгэлзүйн болон мэдрэмжийн шинж тэмдэг",
     description: "...",
