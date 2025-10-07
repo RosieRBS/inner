@@ -22,11 +22,6 @@ const emailInput = document.getElementById("emailInput");
 const emailMessage = document.getElementById("emailMessage");
 import { sectionsTest1, sectionsTest2 } from './quizSections.js';
 
-// ---------------------------
-// Quiz data: Sections
-// Each test has 3 sections, 10 questions each
-// ---------------------------
-
 
 // ---------------------------
 // State
@@ -335,6 +330,7 @@ function showResult(){
 });
 
 }
+
 
 
 
