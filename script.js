@@ -20,7 +20,7 @@ const progressFill = document.getElementById("progressFill");
 const emailForm = document.getElementById("emailForm");
 const emailInput = document.getElementById("emailInput");
 const emailMessage = document.getElementById("emailMessage");
-import { sectionsTest1, sectionsTest2, sectionsTest3 } from './quizSections.js';
+import { sectionsTest1, sectionsTest2, sectionsTest3, sectionsTest4, sectionsTest5, sectionsTest6, sectionsTest7 } from './quizSections.js';
 
 
 // ---------------------------
@@ -50,7 +50,11 @@ let score = 0;
 const tests = {
   sectionsTest1: sectionsTest1,
   sectionsTest2: sectionsTest2,
-  sectionsTest3: sectionsTest3
+  sectionsTest3: sectionsTest3,
+  sectionsTest4: sectionsTest4,
+  sectionsTest5: sectionsTest5,
+  sectionsTest6: sectionsTest6,
+  sectionsTest7: sectionsTest7
   
 };
 
@@ -333,6 +337,7 @@ function showResult(){
 });
 
 }
+
 
 
 
