@@ -48,9 +48,9 @@ let score = 0;
 //   startQuiz();
 // });
 const tests = {
-  sectionsTest1,
-  sectionsTest2,
-  sectionsTest3
+  sectionsTest1: sectionsTest1,
+  sectionsTest2: sectionsTest2,
+  sectionsTest3: sectionsTest3
   
 };
 
