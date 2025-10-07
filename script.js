@@ -21,10 +21,6 @@ const emailForm = document.getElementById("emailForm");
 const emailInput = document.getElementById("emailInput");
 const emailMessage = document.getElementById("emailMessage");
 import { sectionsTest1, sectionsTest2 } from './quizSections.js';
-const sectionsTest1 = [];
-const sectionsTest2 = [];
-
-
 
 
 // ---------------------------
@@ -60,7 +56,7 @@ const tests = {
 testDropdown.addEventListener('change', () => {
   const selectedValue = testDropdown.value;
     sections = tests[selectedValue];
-    startSelectedTest.disabled = !sections;
+    //startSelectedTest.disabled = !sections;
     testType = testDropdown.value;
 });
 startSelectedTest.addEventListener('click', () => {
@@ -335,6 +331,7 @@ function showResult(){
 });
 
 }
+
 
 
 
