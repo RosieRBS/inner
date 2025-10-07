@@ -56,7 +56,7 @@ const tests = {
 testDropdown.addEventListener('change', () => {
   const selectedValue = testDropdown.value;
     sections = tests[selectedValue];
-    //startSelectedTest.disabled = !sections;
+    startSelectedTest.disabled = !sections;
     testType = testDropdown.value;
 });
 startSelectedTest.addEventListener('click', () => {
@@ -331,6 +331,7 @@ function showResult(){
 });
 
 }
+
 
 
 
