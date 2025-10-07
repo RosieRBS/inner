@@ -979,7 +979,7 @@ export const sectionsTest4 = [
     ]
   }
 ];
-export const sectionsTest4 = [
+export const sectionsTest5 = [
   {
     title: "I хэсэг: Өөрийгөө таних ба хүлээн зөвшөөрөх",
     description: "...",
@@ -1057,7 +1057,7 @@ export const sectionsTest4 = [
     ]
   },
   {
-    title: "III хэсэг: Бие даасан байдал ба өсөлт",
+    title: "II хэсэг: Өөрийгөө дүгнэх ба суралцах",
     description: "...",
     questions: [
       { text: "11. Та аливаа үйл явдал эсвэл туршлагын дараа өөрийн гүйцэтгэл, оролцоондоо дүгнэлт хийдэг үү?", options: [
@@ -1133,7 +1133,7 @@ export const sectionsTest4 = [
       ]
   },
   {
-     title: "II хэсэг: Өөрийгөө дүгнэх ба суралцах",
+     title: "III хэсэг: Бие даасан байдал ба өсөлт",
       description: "...",
       questions: [
         { text: "21. Та өөрийн туршлагаа бусадтай хуваалцаж, тэднээс суралцахад нээлттэй байдаг уу?", options: [
