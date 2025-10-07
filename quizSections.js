@@ -499,7 +499,7 @@ export const sectionsTest2 = [
   }
 ];
 
-const sectionsTest3 = [
+export const sectionsTest3 = [
   {
     title: "I хэсэг: Өөрийгөө таних (Self-Awareness)",
     description: "...",
