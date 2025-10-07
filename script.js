@@ -21,6 +21,10 @@ const emailForm = document.getElementById("emailForm");
 const emailInput = document.getElementById("emailInput");
 const emailMessage = document.getElementById("emailMessage");
 import { sectionsTest1, sectionsTest2 } from './quizSections.js';
+const sectionsTest1 = [];
+const sectionsTest2 = [];
+
+
 
 
 // ---------------------------
@@ -331,6 +335,7 @@ function showResult(){
 });
 
 }
+
 
 
 
