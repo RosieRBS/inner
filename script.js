@@ -550,9 +550,14 @@ let score = 0;
 //   sections = sectionsTest2;
 //   startQuiz();
 // });
+const tests = {
+  sectionsTest1,
+  sectionsTest2
+};
 
 testDropdown.addEventListener('change', () => {
-    sections = testDropdown.value;
+  const selectedValue = testDropdown.value;
+    sections = tests[selectedValue];
     startSelectedTest.disabled = !sections;
     testtype = testDropdown.value;
 });
@@ -828,6 +833,7 @@ function showResult(){
 });
 
 }
+
 
 
 
