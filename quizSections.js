@@ -1440,7 +1440,7 @@ export const sectionsTest6 = [
   }
 ];
 
-const sectionsTest7 = [
+export const sectionsTest7 = [
   {
     title: "I хэсэг: Логик үндэслэл ба дүгнэлт (10 асуулт)",
     questions: [
