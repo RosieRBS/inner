@@ -5,8 +5,9 @@ import path from "path";
 import { fileURLToPath } from "url";
 import formData from "form-data";
 import Mailgun from "mailgun.js";
-import fetch from "node-fetch"; // ✅ needed for QPay API calls
-
+import fetch from "node-fetch";// ✅ needed for QPay API calls
+import bodyParser from "body-parser";
+import fs from "fs";
 // ---------------------------
 // Setup
 // ---------------------------
@@ -35,99 +36,109 @@ const mg = mailgun.client({
 // ---------------------------
 // 🔹 QPay Integration
 // ---------------------------
-
-// Get QPay token (merchant auth)
-// async function getQPayToken() {
-//   const response = await fetch("https://merchant-sandbox.qpay.mn/v2/auth/token", {
-//     method: "POST",
-//     headers: { "Content-Type": "application/json" },
-//     body: JSON.stringify({
-//       username: process.env.QPAY_USERNAME,
-//       password: process.env.QPAY_PASSWORD,
-//     }),
-//   });
-//   const data = await response.json();
-//   return data.access_token;
-// }
-
+// ===============
+// QPAY TOKEN FUNCTION
+// ===============
 async function getQPayToken() {
-  const basicAuth = Buffer.from(
-    `${process.env.QPAY_USERNAME}:${process.env.QPAY_PASSWORD}`
-  ).toString("base64");
+  try {
+    const basicAuth = Buffer.from(
+      `${process.env.QPAY_USERNAME}:${process.env.QPAY_PASSWORD}`
+    ).toString("base64");
 
-  const response = await fetch("https://merchant.qpay.mn/v2/auth/token", {
-    method: "POST",
-    headers: {
-      Authorization: `Basic ${basicAuth}`,
-      "Content-Type": "application/json",
-    },
-  });
+    const response = await fetch(`${process.env.QPAY_BASE_URL}/v2/auth/token`, {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${basicAuth}`,
+        "Content-Type": "application/json",
+      },
+    });
 
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.error || "Failed to get token");
-  return data.access_token;
+    const data = await response.json();
+
+    if (!response.ok || !data.access_token) {
+      console.error("❌ QPay Auth Error:", data);
+      throw new Error(data.error || "Failed to get QPay token");
+    }
+
+    return data.access_token;
+  } catch (err) {
+    console.error("❌ QPay token error:", err.message, err.stack);
+    throw err;
+  }
 }
 
-
-// Create invoice
+// ===============
+// CREATE INVOICE
+// ===============
 app.post("/create-invoice", async (req, res) => {
+  const { amount, email, testType } = req.body;
+
   try {
-    const { amount, email, testType } = req.body;
     const token = await getQPayToken();
 
-    const invoiceRes = await fetch("https://merchant.qpay.mn/v2/invoice", {
+    const invoicePayload = {
+      invoice_code: process.env.QPAY_INVOICE_CODE,
+      sender_invoice_no: `INV-${Date.now()}`,
+      invoice_receiver_code: `USER-${Date.now()}`,
+      invoice_description: testType || "Test Payment",
+      amount: amount || 1000,
+    };
+
+    const invoiceRes = await fetch(`${process.env.QPAY_BASE_URL}/v2/invoice`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        invoice_code: process.env.QPAY_INVOICE_CODE, // e.g. TEST_INVOICE
-        sender_invoice_no: `INV-${Date.now()}`,
-        invoice_receiver_code: email,
-        invoice_description: `Payment for ${testType}`,
-        amount: amount || 1000, // change if needed
-        callback_url: "https://inner.mn/payment-callback", // optional
-      }),
+      body: JSON.stringify(invoicePayload),
     });
 
-    const data = await invoiceRes.json();
+    const invoiceData = await invoiceRes.json();
+
     if (!invoiceRes.ok) {
-  console.error("❌ QPay API error:", data);
-  throw new Error(data.detail || JSON.stringify(data) || "Failed to create invoice");
-}
+      console.error("❌ QPay invoice error:", invoiceData);
+      return res.status(500).json({ error: "Failed to create invoice" });
+    }
 
-
+    const qrBase64 = invoiceData.qr_image;
     res.json({
-  success: true,
-  qrImage: `data:image/png;base64,${data.qr_image}`,
-  invoice_id: data.invoice_id,
-});
-
+      qr_base64: qrBase64,
+      invoice_id: invoiceData.invoice_id,
+    });
   } catch (err) {
-    console.error("❌ QPay invoice error:", err);
-    res.status(500).json({ success: false, message: err.message });
+    console.error("❌ Create invoice failed:", err.message);
+    res.status(500).json({ error: "Invoice creation failed" });
   }
 });
 
-// Check payment status
+// ===============
+// CHECK INVOICE
+// ===============
 app.get("/check-invoice/:id", async (req, res) => {
+  const { id } = req.params;
+
   try {
-    const { id } = req.params;
     const token = await getQPayToken();
 
-    const checkRes = await fetch(`https://merchant.qpay.mn/v2/payment/check/${id}`, {
-      method: "GET",
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const checkRes = await fetch(
+      `${process.env.QPAY_BASE_URL}/v2/payment/check/${id}`,
+      {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
 
-    const data = await checkRes.json();
-    if (!checkRes.ok) throw new Error(data.detail || "Failed to check invoice");
+    const checkData = await checkRes.json();
 
-    res.json({ success: true, paid: data.paid_amount >= data.amount });
+    if (!checkRes.ok) {
+      console.error("❌ QPay check error:", checkData);
+      return res.status(500).json({ error: "Failed to check invoice" });
+    }
+
+    res.json(checkData);
   } catch (err) {
-    console.error("❌ QPay check error:", err);
-    res.status(500).json({ success: false, message: err.message });
+    console.error("❌ Check invoice failed:", err.message);
+    res.status(500).json({ error: "Check invoice failed" });
   }
 });
 
@@ -277,6 +288,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
 });
+
 
 
 
