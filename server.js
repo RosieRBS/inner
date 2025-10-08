@@ -55,7 +55,7 @@ async function getQPayToken() {
     `${process.env.QPAY_USERNAME}:${process.env.QPAY_PASSWORD}`
   ).toString("base64");
 
-  const response = await fetch("https://merchant-sandbox.qpay.mn/v2/auth/token", {
+  const response = await fetch("https://merchant.qpay.mn/v2/auth/token", {
     method: "POST",
     headers: {
       Authorization: `Basic ${basicAuth}`,
@@ -75,7 +75,7 @@ app.post("/create-invoice", async (req, res) => {
     const { amount, email, testType } = req.body;
     const token = await getQPayToken();
 
-    const invoiceRes = await fetch("https://merchant-sandbox.qpay.mn/v2/invoice", {
+    const invoiceRes = await fetch("https://merchant.qpay.mn/v2/invoice", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
