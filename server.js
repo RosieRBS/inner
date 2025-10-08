@@ -116,7 +116,7 @@ app.get("/check-invoice/:id", async (req, res) => {
     const { id } = req.params;
     const token = await getQPayToken();
 
-    const checkRes = await fetch(`https://merchant-sandbox.qpay.mn/v2/payment/check/${id}`, {
+    const checkRes = await fetch(`https://merchant.qpay.mn/v2/payment/check/${id}`, {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -277,6 +277,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
 });
+
 
 
 
