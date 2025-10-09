@@ -62,8 +62,6 @@ async function getAccessToken() {
       Authorization: `Basic ${basicAuth}`,
     },
   });
-  // const text = await res.text(); // capture raw response
-  // console.log("🟢 QPay raw response:", text);
   let data;
   try {
     data = await res.json();
@@ -369,6 +367,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
 });
+
 
 
 
