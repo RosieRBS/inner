@@ -15,6 +15,7 @@ app.use(express.json());
 // For ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const sentEmails = {}; // { invoice_id: true }
 
 // Serve front-end files
 app.use(express.static(path.join(__dirname)));
@@ -239,7 +240,8 @@ app.post("/check-payment", async (req, res) => {
     const isPaid = payment.payment_status === "PAID" || (payment.rows && payment.rows.some(p => p.payment_status === "PAID"));
 
     if (!isPaid) return res.json({ success: true, paid: false });
-
+    if (sentEmails[invoice_id]) return res.json({ success: true, paid: true });
+    sentEmails[invoice_id] = true;
     // Send results email
     const { interpretation, explanation } = getInterpretation(testType, score);
     const subject = `${testType} — Таны үр дүн 🎉`;
@@ -410,6 +412,7 @@ app.listen(PORT, "0.0.0.0", () => {
 // ---------------------------
 // Start server
 // ---------------------------
+
 
 
 
