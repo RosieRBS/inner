@@ -285,11 +285,16 @@ function showResult(){
     // Step 2: show QR code popup
     const qrPopup = document.createElement("div");
     qrPopup.className = "qr-popup";
+    // Instead of opening qrImage in a new tab
+const img = document.createElement("img");
+img.src = data.qr_image; // this can be a huge data URL
+//qrPopup.appendChild(img);
+
     qrPopup.innerHTML = `
       <div class="qr-box">
         <h3>💳 Pay with QPay</h3>
         <p>Scan this QR code using your bank app.</p>
-        <img src="${data.qr_image}" alt="QPay QR Code" />
+        <img src="${img}" alt="QPay QR Code" />
         <p>Invoice ID: ${data.invoice_id}</p>
         <button id="cancelPay" class="btn-ghost">Cancel</button>
       </div>
@@ -342,6 +347,7 @@ function showResult(){
 });
 
 }
+
 
 
 
