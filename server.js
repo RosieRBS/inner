@@ -74,6 +74,14 @@ async function createInvoice({ amount, email, testType }) {
     amount,
     //callback_url: "https://yourdomain.mn/qpay-callback", // optional
   };
+  console.log("🟢 Sending to QPay:", invoiceData);
+console.log("Headers:", headers);
+
+const result = await response.json().catch(e => {
+  console.error("❌ Failed to parse JSON from QPay:", e);
+  throw e;
+});
+console.log("🟢 QPay Response:", result);
 
   const res = await fetch(`${QPAY_BASE_URL}/invoice`, {
     method: "POST",
@@ -83,6 +91,14 @@ async function createInvoice({ amount, email, testType }) {
     },
     body: JSON.stringify(invoiceData),
   });
+console.log("🟢 Sending to QPay:", invoiceData);
+console.log("Headers:", headers);
+
+const result = await response.json().catch(e => {
+  console.error("❌ Failed to parse JSON from QPay:", e);
+  throw e;
+});
+console.log("🟢 QPay Response:", result);
 
   const data = await res.json();
   if (!res.ok || !data.invoice_id) {
@@ -321,6 +337,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
 });
+
 
 
 
