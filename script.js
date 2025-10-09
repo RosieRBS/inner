@@ -268,6 +268,8 @@ function showResult(){
   emailMessage.textContent = "⏳ Creating payment invoice...";
   emailMessage.style.color = "black";
 
+  
+////////////////////////////
   try {
     const res = await fetch("/start-payment", {
       method: "POST",
@@ -390,7 +392,11 @@ document.getElementById("cancelPay").addEventListener("click", () => qrPopup.rem
       const check = await fetch(`/check-payment`, {
   method: "POST",
   headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ invoice_id: data.invoice_id }),
+  body: JSON.stringify({ 
+          invoice_id: data.invoice_id,
+          email,
+          score: answers.reduce((a, b) => a + b, 0),
+          testType, }),
 });
 
       const status = await check.json();
@@ -402,22 +408,22 @@ document.getElementById("cancelPay").addEventListener("click", () => qrPopup.rem
         emailMessage.style.color = "green";
 
         // Step 4: Send results after payment
-        const send = await fetch("/send-results", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email,
-            score: answers.reduce((a, b) => a + b, 0),
-            testType,
-          }),
-        });
+        // const send = await fetch("/send-results", {
+        //   method: "POST",
+        //   headers: { "Content-Type": "application/json" },
+        //   body: JSON.stringify({
+        //     email,
+        //     score: answers.reduce((a, b) => a + b, 0),
+        //     testType,
+        //   }),
+        // });
 
-        const result = await send.json();
-        if (result.success) {
-          emailMessage.textContent = "🎉 Your results have been sent!";
-        } else {
-          emailMessage.textContent = "❌ Payment ok, but failed to send email.";
-        }
+        // const result = await send.json();
+        // if (result.success) {
+        //   emailMessage.textContent = "🎉 Your results have been sent!";
+        // } else {
+        //   emailMessage.textContent = "❌ Payment ok, but failed to send email.";
+        // }
       }
     }, 5000);
   } catch (err) {
@@ -428,6 +434,7 @@ document.getElementById("cancelPay").addEventListener("click", () => qrPopup.rem
 });
 
 }
+
 
 
 
