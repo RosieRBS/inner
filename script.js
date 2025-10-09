@@ -315,28 +315,52 @@ new QRCode(document.getElementById("qrcode"), {
 
 // Populate bank icons
 // Populate bank icons neatly
-const bankLinksDiv = document.getElementById("bankLinks");
+// Create bank icons container
+const bankLinksDiv = document.createElement("div");
+bankLinksDiv.id = "bankLinks";
 bankLinksDiv.style.display = "grid";
 bankLinksDiv.style.gridTemplateColumns = "repeat(auto-fit, minmax(60px, 1fr))";
 bankLinksDiv.style.gap = "10px";
 bankLinksDiv.style.justifyItems = "center";
 bankLinksDiv.style.marginTop = "10px";
+bankLinksDiv.style.maxHeight = "150px";   // max height, will scroll if overflow
+bankLinksDiv.style.overflowY = "auto";
+bankLinksDiv.style.padding = "5px";
 
+// Populate the banks
 data.urls.forEach(bank => {
   const a = document.createElement("a");
-  a.href = bank.link;         
-  a.target = "_blank";       
+  a.href = bank.link;
+  a.target = "_blank";
   a.title = bank.name;
 
   const img = document.createElement("img");
-  img.src = bank.logo;        
+  img.src = bank.logo;
   img.alt = bank.name;
-  img.style.width = "50px";   // smaller, consistent size
+  img.style.width = "50px";
   img.style.height = "50px";
   img.style.borderRadius = "8px";
   img.style.cursor = "pointer";
-  img.style.objectFit = "contain"; // keep logo pr
+  img.style.objectFit = "contain";
+  img.style.transition = "transform 0.2s, box-shadow 0.2s";
 
+  // Hover effect
+  img.addEventListener("mouseenter", () => {
+    img.style.transform = "scale(1.1)";
+    img.style.boxShadow = "0 4px 10px rgba(0,0,0,0.2)";
+  });
+  img.addEventListener("mouseleave", () => {
+    img.style.transform = "scale(1)";
+    img.style.boxShadow = "none";
+  });
+
+  a.appendChild(img);
+  bankLinksDiv.appendChild(a);
+});
+
+// Add it below QR code
+const qrBox = document.querySelector(".qr-box");
+qrBox.appendChild(bankLinksDiv);
 
 // Cancel button
 document.getElementById("cancelPay").addEventListener("click", () => qrPopup.remove());
@@ -404,6 +428,7 @@ document.getElementById("cancelPay").addEventListener("click", () => qrPopup.rem
 });
 
 }
+
 
 
 
