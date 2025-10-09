@@ -160,7 +160,7 @@ async function checkPayment(invoiceId) {
 app.post("/start-payment", async (req, res) => {
   try {
     const { email, testType } = req.body;
-    const amount = 1000; // price in MNT
+    const amount = 1; // price in MNT
 
     const invoice = await createInvoice({ amount, email, testType });
 
@@ -367,6 +367,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
 });
+
 
 
 
