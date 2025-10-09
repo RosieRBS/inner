@@ -283,20 +283,32 @@ function showResult(){
     if (!data.success) throw new Error(data.message);
 
 // Step 2: show QR code popup
+// Pick the first bank’s QR string
+const firstBankLink = data.urls[0].link; // e.g., "bogdbank://q?qPay_QRcode=00020101021215312794..."
+const qrString = decodeURIComponent(firstBankLink.split("qPay_QRcode=")[1]);
+
+// Create popup
 const qrPopup = document.createElement("div");
 qrPopup.className = "qr-popup";
-
 qrPopup.innerHTML = `
   <div class="qr-box">
     <h3>💳 Pay with QPay</h3>
     <p>Scan this QR code using your bank app.</p>
-    <img id="qrcode" src="${data.qr_image}" alt="QPay QR Code" style="width:250px; height:250px;" />
+    <div id="qrcode"></div>
     <p>Invoice ID: ${data.invoice_id}</p>
     <button id="cancelPay" class="btn-ghost">Cancel</button>
   </div>
 `;
 
 document.body.appendChild(qrPopup);
+
+// Generate QR code dynamically
+new QRCode(document.getElementById("qrcode"), {
+  text: qrString,
+  width: 250,
+  height: 250,
+  correctLevel: QRCode.CorrectLevel.H
+});
 
 // Cancel button
 document.getElementById("cancelPay").addEventListener("click", () => qrPopup.remove());
@@ -364,6 +376,7 @@ document.getElementById("cancelPay").addEventListener("click", () => qrPopup.rem
 });
 
 }
+
 
 
 
