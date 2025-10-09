@@ -291,7 +291,8 @@ qrPopup.className = "qr-popup";
 // Example: "bogdbank://q?qPay_QRcode=..."
 // We'll split at 'q=' to get the actual QR data
 const firstBankLink = data.urls[0].link; 
-const qrString = firstBankLink.split("q=")[1];
+const qrParam = firstBankLink.split("qPay_QRcode=")[1];
+const qrString = decodeURIComponent(qrParam);
 
 qrPopup.innerHTML = `
   <div class="qr-box">
@@ -306,10 +307,14 @@ qrPopup.innerHTML = `
 document.body.appendChild(qrPopup);
 
 // Generate the QR code in the <div id="qrcode">
-new QRCode(document.getElementById("qrcode"), {
+const qrDiv = document.getElementById("qrcode");
+qrDiv.innerHTML = ""; // clear if anything is already there
+
+new QRCode(qrDiv, {
   text: qrString,
   width: 250,
   height: 250,
+  correctLevel: QRCode.CorrectLevel.H // better error correction
 });
 
 // Cancel button
@@ -378,6 +383,7 @@ document.getElementById("cancelPay").addEventListener("click", () => qrPopup.rem
 });
 
 }
+
 
 
 
