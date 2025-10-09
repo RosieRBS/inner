@@ -86,8 +86,8 @@ async function createInvoice({ amount, email, testType }) {
   const token = await getAccessToken();
 
   const invoiceData = {
-    invoice_code: QPAY_INVOICE_CODE, // must match your QPay dashboard
-    sender_invoice_no: Date.now().toString(), // unique order number
+    invoice_code: process.env.QPAY_INVOICE_CODE, // must be live invoice code
+    sender_invoice_no: Date.now().toString(),
     invoice_receiver_code: "terminal",
     invoice_description: `Тестийн төлбөр (${testType})`,
     amount,
@@ -104,24 +104,26 @@ async function createInvoice({ amount, email, testType }) {
     body: JSON.stringify(invoiceData),
   });
 
-  let result;
+  const text = await res.text(); // 🔹 log raw response
+  console.log("🟢 QPay raw response:", text);
+
+  let data;
   try {
-    result = await res.json();
+    data = JSON.parse(text);
   } catch (e) {
-    console.error("❌ Failed to parse JSON from QPay invoice:", e);
-    throw e;
+    console.error("❌ Failed to parse JSON from QPay:", e);
+    throw new Error("Invalid JSON response from QPay (check logs for HTML/error)");
   }
 
-  console.log("🟢 QPay Response:", result);
-
-  if (!res.ok || !result.invoice_id) {
-    console.error("❌ QPay invoice creation failed:", result);
+  if (!res.ok || !data.invoice_id) {
+    console.error("❌ QPay invoice creation failed:", data);
     throw new Error("Failed to create invoice");
   }
 
-  console.log(`✅ Invoice created for ${email}:`, result.invoice_id);
-  return result; // returns invoice_id, QR image, and bank URLs
+  console.log(`✅ Invoice created for ${email}:`, data.invoice_id);
+  return data;
 }
+
 
 // Check payment status
 async function checkPayment(invoiceId) {
@@ -368,6 +370,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
 });
+
 
 
 
