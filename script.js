@@ -282,39 +282,21 @@ function showResult(){
     const data = await res.json();
     if (!data.success) throw new Error(data.message);
 
-    // Step 2: show QR code popup
-    // Step 2: Show QR code popup
+// Step 2: show QR code popup
 const qrPopup = document.createElement("div");
 qrPopup.className = "qr-popup";
-
-// Extract the qPay_QRcode string from the first bank link
-// Example: "bogdbank://q?qPay_QRcode=..."
-// We'll split at 'q=' to get the actual QR data
-const qrImg = document.createElement("img");
-qrImg.src = data.qr_image; // directly use QPay's QR image
-qrImg.alt = "QPay QR Code";
-qrImg.width = 250;
-qrImg.height = 250;
-
-qrDiv.appendChild(qrImg);
-
 
 qrPopup.innerHTML = `
   <div class="qr-box">
     <h3>💳 Pay with QPay</h3>
     <p>Scan this QR code using your bank app.</p>
-    <div id="qrcode"></div>
+    <img id="qrcode" src="${data.qr_image}" alt="QPay QR Code" style="width:250px; height:250px;" />
     <p>Invoice ID: ${data.invoice_id}</p>
     <button id="cancelPay" class="btn-ghost">Cancel</button>
   </div>
 `;
 
 document.body.appendChild(qrPopup);
-
-// Generate the QR code in the <div id="qrcode">
-const qrDiv = document.getElementById("qrcode");
-qrDiv.innerHTML = ""; // clear if anything is already there
-
 
 // Cancel button
 document.getElementById("cancelPay").addEventListener("click", () => qrPopup.remove());
@@ -382,6 +364,7 @@ document.getElementById("cancelPay").addEventListener("click", () => qrPopup.rem
 });
 
 }
+
 
 
 
