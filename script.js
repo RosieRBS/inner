@@ -276,7 +276,7 @@ function showResult(){
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         email,
-        amount: 4900, // your price in MNT
+        amount: 1, // your price in MNT
         testType,
       }),
     });
@@ -434,6 +434,7 @@ document.getElementById("cancelPay").addEventListener("click", () => qrPopup.rem
 });
 
 }
+
 
 
 
