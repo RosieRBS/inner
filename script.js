@@ -314,25 +314,29 @@ new QRCode(document.getElementById("qrcode"), {
 });
 
 // Populate bank icons
+// Populate bank icons neatly
 const bankLinksDiv = document.getElementById("bankLinks");
+bankLinksDiv.style.display = "grid";
+bankLinksDiv.style.gridTemplateColumns = "repeat(auto-fit, minmax(60px, 1fr))";
+bankLinksDiv.style.gap = "10px";
+bankLinksDiv.style.justifyItems = "center";
+bankLinksDiv.style.marginTop = "10px";
+
 data.urls.forEach(bank => {
   const a = document.createElement("a");
-  a.href = bank.link;          // deep link to app
-  a.target = "_blank";         // open in new tab if on desktop
+  a.href = bank.link;         
+  a.target = "_blank";       
   a.title = bank.name;
-  a.style.margin = "5px";
 
   const img = document.createElement("img");
-  img.src = bank.logo;         // icon from logs
+  img.src = bank.logo;        
   img.alt = bank.name;
-  img.width = 50;
-  img.height = 50;
-  img.style.borderRadius = "10%";
+  img.style.width = "50px";   // smaller, consistent size
+  img.style.height = "50px";
+  img.style.borderRadius = "8px";
   img.style.cursor = "pointer";
+  img.style.objectFit = "contain"; // keep logo pr
 
-  a.appendChild(img);
-  bankLinksDiv.appendChild(a);
-});
 
 // Cancel button
 document.getElementById("cancelPay").addEventListener("click", () => qrPopup.remove());
@@ -400,6 +404,7 @@ document.getElementById("cancelPay").addEventListener("click", () => qrPopup.rem
 });
 
 }
+
 
 
 
