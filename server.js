@@ -67,7 +67,7 @@ async function createInvoice({ amount, email, testType }) {
   const token = await getAccessToken();
 
   const invoiceData = {
-    invoice_code: "TEST_ORDER", // registered code from QPay dashboard
+    invoice_code: INNER_MN_INVOICE, // registered code from QPay dashboard
     sender_invoice_no: Date.now().toString(), // unique order number
     invoice_receiver_code: "terminal",
     invoice_description: `Тестийн төлбөр (${testType})`,
@@ -321,6 +321,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
 });
+
 
 
 
