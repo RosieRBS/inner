@@ -301,7 +301,7 @@ function showResult(){
 
     // Step 3: Poll every 5s to check payment
     const checkPayment = setInterval(async () => {
-      cconst check = await fetch(`/check-payment`, {
+      const check = await fetch(`/check-payment`, {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ invoice_id: data.invoice_id }),
@@ -342,6 +342,7 @@ function showResult(){
 });
 
 }
+
 
 
 
