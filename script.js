@@ -284,30 +284,54 @@ function showResult(){
 
 // Step 2: show QR code popup
 // Pick the first bank’s QR string
-const firstBankLink = data.urls[0].link; // e.g., "bogdbank://q?qPay_QRcode=00020101021215312794..."
+// Pick the QR string from the first bank link
+const firstBankLink = data.urls[0].link; 
 const qrString = decodeURIComponent(firstBankLink.split("qPay_QRcode=")[1]);
 
-// Create popup
+// Create popup container
 const qrPopup = document.createElement("div");
 qrPopup.className = "qr-popup";
+
 qrPopup.innerHTML = `
   <div class="qr-box">
     <h3>💳 Pay with QPay</h3>
-    <p>Scan this QR code using your bank app.</p>
+    <p>Scan this QR code using your bank app, or click an icon to open directly.</p>
     <div id="qrcode"></div>
     <p>Invoice ID: ${data.invoice_id}</p>
+    <div id="bankLinks" class="bank-links"></div>
     <button id="cancelPay" class="btn-ghost">Cancel</button>
   </div>
 `;
 
 document.body.appendChild(qrPopup);
 
-// Generate QR code dynamically
+// Generate QR code
 new QRCode(document.getElementById("qrcode"), {
   text: qrString,
   width: 250,
   height: 250,
   correctLevel: QRCode.CorrectLevel.H
+});
+
+// Populate bank icons
+const bankLinksDiv = document.getElementById("bankLinks");
+data.urls.forEach(bank => {
+  const a = document.createElement("a");
+  a.href = bank.link;          // deep link to app
+  a.target = "_blank";         // open in new tab if on desktop
+  a.title = bank.name;
+  a.style.margin = "5px";
+
+  const img = document.createElement("img");
+  img.src = bank.logo;         // icon from logs
+  img.alt = bank.name;
+  img.width = 50;
+  img.height = 50;
+  img.style.borderRadius = "10%";
+  img.style.cursor = "pointer";
+
+  a.appendChild(img);
+  bankLinksDiv.appendChild(a);
 });
 
 // Cancel button
@@ -376,6 +400,7 @@ document.getElementById("cancelPay").addEventListener("click", () => qrPopup.rem
 });
 
 }
+
 
 
 
