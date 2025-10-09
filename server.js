@@ -39,14 +39,21 @@ const mg = mailgun.client({
 // ---------------------------
 // 🔹 QPay Integration
 // ---------------------------
-const QPAY_BASE_URL = "https://merchant.qpay.mn/v2";
+// ---------------------------
+// 🔹 QPay Integration (Fixed)
+// ---------------------------
+const QPAY_BASE_URL = process.env.QPAY_SANDBOX === "true"
+  ? "https://merchant-sandbox.qpay.mn/v2"
+  : "https://merchant.qpay.mn/v2";
+
 const QPAY_USERNAME = process.env.QPAY_USERNAME;
 const QPAY_PASSWORD = process.env.QPAY_PASSWORD;
-const QPAY_INVOICE_CODE = process.env.QPAY_INVOICE_CODE;
+const QPAY_INVOICE_CODE = process.env.QPAY_INVOICE_CODE; // Must match QPay dashboard
 
 // Encode credentials for Basic Auth
 const basicAuth = Buffer.from(`${QPAY_USERNAME}:${QPAY_PASSWORD}`).toString("base64");
 
+// Get access token
 async function getAccessToken() {
   const res = await fetch(`${QPAY_BASE_URL}/auth/token`, {
     method: "POST",
@@ -55,26 +62,37 @@ async function getAccessToken() {
       Authorization: `Basic ${basicAuth}`,
     },
   });
-  const data = await res.json();
+
+  let data;
+  try {
+    data = await res.json();
+  } catch (e) {
+    console.error("❌ Failed to parse QPay auth response:", e);
+    throw e;
+  }
+
   if (!res.ok || !data.access_token) {
     console.error("❌ QPay auth error:", data);
     throw new Error("Failed to get QPay token");
   }
+
   return data.access_token;
 }
 
-// Create a new invoice for each order
+// Create a new invoice
 async function createInvoice({ amount, email, testType }) {
   const token = await getAccessToken();
 
   const invoiceData = {
-    invoice_code: QPAY_INVOICE_CODE, // registered code from QPay dashboard
+    invoice_code: QPAY_INVOICE_CODE, // must match your QPay dashboard
     sender_invoice_no: Date.now().toString(), // unique order number
     invoice_receiver_code: "terminal",
     invoice_description: `Тестийн төлбөр (${testType})`,
     amount,
-    //callback_url: "https://yourdomain.mn/qpay-callback", // optional
   };
+
+  console.log("🟢 Sending to QPay:", invoiceData);
+
   const res = await fetch(`${QPAY_BASE_URL}/invoice`, {
     method: "POST",
     headers: {
@@ -83,20 +101,30 @@ async function createInvoice({ amount, email, testType }) {
     },
     body: JSON.stringify(invoiceData),
   });
-  
-  const data = await res.json();
-  if (!res.ok || !data.invoice_id) {
-    console.error("❌ QPay invoice error:", data);
+
+  let result;
+  try {
+    result = await res.json();
+  } catch (e) {
+    console.error("❌ Failed to parse JSON from QPay invoice:", e);
+    throw e;
+  }
+
+  console.log("🟢 QPay Response:", result);
+
+  if (!res.ok || !result.invoice_id) {
+    console.error("❌ QPay invoice creation failed:", result);
     throw new Error("Failed to create invoice");
   }
 
-  console.log(`✅ Invoice created for ${email}:`, data.invoice_id);
-  return data; // contains QR image, urls, etc.
+  console.log(`✅ Invoice created for ${email}:`, result.invoice_id);
+  return result; // returns invoice_id, QR image, and bank URLs
 }
 
 // Check payment status
 async function checkPayment(invoiceId) {
   const token = await getAccessToken();
+
   const res = await fetch(`${QPAY_BASE_URL}/payment/check`, {
     method: "POST",
     headers: {
@@ -108,21 +136,30 @@ async function checkPayment(invoiceId) {
       object_id: invoiceId,
     }),
   });
-  const data = await res.json();
+
+  let data;
+  try {
+    data = await res.json();
+  } catch (e) {
+    console.error("❌ Failed to parse JSON from QPay payment check:", e);
+    throw e;
+  }
+
   if (!res.ok) {
     console.error("❌ QPay payment check error:", data);
     throw new Error("Failed to check payment");
   }
+
   return data;
 }
 
 // ---------------------------
-// 💳 New endpoint: Start payment
+// 💳 Endpoint: Start payment
 // ---------------------------
 app.post("/start-payment", async (req, res) => {
   try {
     const { email, testType } = req.body;
-    const amount = 1000; // 💰 test price in MNT
+    const amount = 1000; // price in MNT
 
     const invoice = await createInvoice({ amount, email, testType });
 
@@ -140,21 +177,21 @@ app.post("/start-payment", async (req, res) => {
 });
 
 // ---------------------------
-// 💰 New endpoint: Check payment and send email
+// 💰 Endpoint: Check payment & send email
 // ---------------------------
 app.post("/check-payment", async (req, res) => {
   const { invoice_id, email, score, testType } = req.body;
+
   try {
     const payment = await checkPayment(invoice_id);
 
-    // QPay marks paid invoice as PAID
     const isPaid =
       payment.payment_status === "PAID" ||
       (payment.rows && payment.rows.some((p) => p.payment_status === "PAID"));
 
     if (isPaid) {
       console.log(`💸 Payment confirmed for ${email}`);
-      // After payment confirmed → send results email
+
       const subject = `${testType} — Таны үр дүн 🎉`;
       const text = `Сайн байна уу!\n\n"${testType}" тестийн таны оноо: ${score}/150\n\nБаяр хүргэе, таны төлбөр амжилттай баталгаажсан.\n\nINNER.mn баг`;
 
@@ -165,9 +202,17 @@ app.post("/check-payment", async (req, res) => {
         text,
       });
 
-      return res.json({ success: true, paid: true, message: "Payment confirmed and email sent." });
+      return res.json({
+        success: true,
+        paid: true,
+        message: "Payment confirmed and email sent.",
+      });
     } else {
-      return res.json({ success: true, paid: false, message: "Payment not yet completed." });
+      return res.json({
+        success: true,
+        paid: false,
+        message: "Payment not yet completed.",
+      });
     }
   } catch (err) {
     console.error("❌ Error checking payment:", err);
@@ -321,6 +366,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
 });
+
 
 
 
