@@ -269,7 +269,7 @@ function showResult(){
   emailMessage.style.color = "black";
 
   try {
-    const res = await fetch("/create-invoice", {
+    const res = await fetch("/start-payment", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -289,7 +289,7 @@ function showResult(){
       <div class="qr-box">
         <h3>💳 Pay with QPay</h3>
         <p>Scan this QR code using your bank app.</p>
-        <img src="${data.qrImage}" alt="QPay QR Code" />
+        <img src="${data.qr_image}" alt="QPay QR Code" />
         <p>Invoice ID: ${data.invoice_id}</p>
         <button id="cancelPay" class="btn-ghost">Cancel</button>
       </div>
@@ -301,7 +301,12 @@ function showResult(){
 
     // Step 3: Poll every 5s to check payment
     const checkPayment = setInterval(async () => {
-      const check = await fetch(`/check-invoice/${data.invoice_id}`);
+      cconst check = await fetch(`/check-payment`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ invoice_id: data.invoice_id }),
+});
+
       const status = await check.json();
 
       if (status.paid) {
@@ -337,6 +342,7 @@ function showResult(){
 });
 
 }
+
 
 
 
