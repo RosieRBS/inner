@@ -409,41 +409,45 @@ document.getElementById("cancelPay").addEventListener("click", () => qrPopup.rem
           testType, }),
 });
 
-      const status = await check.json();
+      const data = await check.json();
 
-      if (status.paid) {
-        clearInterval(checkPayment);
-        qrPopup.remove();
-        emailMessage.textContent = "✅ Payment confirmed! Sending your results...";
-        emailMessage.style.color = "green";
+      if (data.paid) {
+  clearInterval(checkInterval);
+  hidePopup(); // Close QR popup if you have one
 
-          // Show result on screen
-  const resultContainer = document.getElementById("resultContainer");
-  resultContainer.innerHTML = `
-    <h2 class="text-xl font-bold mb-2">Таны үр дүн 🎉</h2>
-    <p><strong>Оноо:</strong> ${score}/150</p>
-    <p class="mt-2"><strong>Тайлбар:</strong> ${data.interpretation}</p>
-    <p class="mt-2 text-gray-600">${data.explanation}</p>
+  // Show "payment confirmed" message
+  const messageBox = document.createElement("div");
+  messageBox.className = "payment-success";
+  messageBox.innerHTML = `
+    <h2>✅ Төлбөр баталгаажлаа!</h2>
+    <p>Таны үр дүн имэйлээр илгээгдлээ.</p>
+    <button id="seeResultsBtn" class="see-results-btn">Үр дүнг харах</button>
   `;
+  document.body.appendChild(messageBox);
 
-        // Step 4: Send results after payment
-        // const send = await fetch("/send-results", {
-        //   method: "POST",
-        //   headers: { "Content-Type": "application/json" },
-        //   body: JSON.stringify({
-        //     email,
-        //     score: answers.reduce((a, b) => a + b, 0),
-        //     testType,
-        //   }),
-        // });
+  // Store data for result card
+  const { interpretation, explanation } = data;
+  const scoreText = `${score}/150`;
 
-        // const result = await send.json();
-        // if (result.success) {
-        //   emailMessage.textContent = "🎉 Your results have been sent!";
-        // } else {
-        //   emailMessage.textContent = "❌ Payment ok, but failed to send email.";
-        // }
-      }
+  // When "See Results" clicked → show new card
+  document.getElementById("seeResultsBtn").addEventListener("click", () => {
+    const existingCard = document.getElementById("resultCard");
+    if (existingCard) existingCard.remove();
+
+    const resultCard = document.createElement("div");
+    resultCard.id = "resultCard";
+    resultCard.className = "result-card";
+    resultCard.innerHTML = `
+      <h2 class="text-xl font-bold mb-2">Таны үр дүн 🎉</h2>
+      <p><strong>Оноо:</strong> ${scoreText}</p>
+      <p class="mt-2"><strong>Тайлбар:</strong> ${interpretation}</p>
+      <p class="mt-2 text-gray-600">${explanation}</p>
+    `;
+
+    document.body.appendChild(resultCard);
+    resultCard.scrollIntoView({ behavior: "smooth" });
+  });
+}
     }, 5000);
   } catch (err) {
     console.error(err);
@@ -453,6 +457,7 @@ document.getElementById("cancelPay").addEventListener("click", () => qrPopup.rem
 });
 
 }
+
 
 
 
