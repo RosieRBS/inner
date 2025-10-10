@@ -409,9 +409,9 @@ document.getElementById("cancelPay").addEventListener("click", () => qrPopup.rem
           testType, }),
 });
 
-      const data = await check.json();
+      const status = await check.json();
 
-      if (data.paid) {
+      if (status.paid) {
   clearInterval(checkPayment);
   qrPopup.remove(); // Close QR popup if you have one
 
@@ -426,7 +426,7 @@ document.getElementById("cancelPay").addEventListener("click", () => qrPopup.rem
   document.body.appendChild(messageBox);
 
   // Store data for result card
-  const { interpretation, explanation } = data;
+  const { interpretation, explanation } = status;
   const scoreText = `${score}/150`;
 
   // When "See Results" clicked → show new card
@@ -457,6 +457,7 @@ document.getElementById("cancelPay").addEventListener("click", () => qrPopup.rem
 });
 
 }
+
 
 
 
