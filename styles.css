@@ -16,7 +16,7 @@ body {
     align-items: center;
     justify-content: center;
     font-family: "Inter", system-ui, sans-serif;
-    background: linear-gradient(135deg, #8afafd, #8afafd);
+    background: linear-gradient(135deg, #2b4110, #819765);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     color: var(--text);
@@ -164,6 +164,7 @@ h2 { margin: 0 0 1rem; }
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
 
 
 
