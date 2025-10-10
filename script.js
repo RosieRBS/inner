@@ -414,10 +414,8 @@ document.getElementById("cancelPay").addEventListener("click", () => qrPopup.rem
 
       if (status.paid) {
         const { interpretation, explanation } = status;
-        const scoreText = `${score}/150`;
-        clearInterval(checkPayment);
         qrPopup.remove(); // Close QR popup if you have one
-        paymentComplete();
+        paymentComplete(status, answers.reduce((a, b) => a + b, 0));
 }
     }, 5000);
   } catch (err) {
@@ -429,7 +427,14 @@ document.getElementById("cancelPay").addEventListener("click", () => qrPopup.rem
 
 }
 
-function paymentComplete(){
+function paymentComplete(status, totalScore){
+    let payComplete = document.getElementById("payComplete");
+  if (!payComplete) {
+    payComplete = document.createElement("div");
+    payComplete.id = "payComplete";
+    document.body.appendChild(payComplete);
+  }
+  
     resultCard.classList.add("hidden");
     payComplete.classList.remove("hidden");
     payComplete.innerHTML = `
@@ -439,12 +444,22 @@ function paymentComplete(){
   `;
   // When "See Results" clicked → show new card
   document.getElementById("seeResultsBtn").addEventListener("click", () => {
-    showResult();
+    showResult(status, totalScore);
   });
 }
-function showResult(){
-    payComplete.classList.add("hidden");
+function showResult(status, totalScore){  
+  const { interpretation, explanation } = status;
+  const scoreText = `${totalScore}/150`;
+    let showRslt = document.getElementById("showRslt");
+  if (!showRslt) {
+    showRslt = document.createElement("div");
+    showRslt.id = "showRslt";
+    document.body.appendChild(showRslt);
+  }
+  
+    document.getElementById("payComplete").classList.add("hidden");
     showRslt.classList.remove("hidden");
+  
   
     showRslt.innerHTML = `
       <h2 class="text-xl font-bold mb-2">Таны үр дүн 🎉</h2>
@@ -454,6 +469,7 @@ function showResult(){
     `;
     resultCard.scrollIntoView({ behavior: "smooth" });
 }
+
 
 
 
