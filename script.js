@@ -430,37 +430,28 @@ document.getElementById("cancelPay").addEventListener("click", () => qrPopup.rem
 }
 
 function paymentComplete(status, totalScore){
-    let payComplete = document.getElementById("payComplete");
-  if (!payComplete) {
-    payComplete = document.createElement("div");
-    payComplete.id = "payComplete";
-    document.body.appendChild(payComplete);
-  }
-  
-    resultCard.classList.add("hidden");
-    payComplete.classList.remove("hidden");
-    payComplete.innerHTML = `
+    const payComplete = document.getElementById("payComplete");
+  payComplete.classList.remove("hidden");
+  document.getElementById("resultCard").classList.add("hidden");
+
+  payComplete.innerHTML = `
     <h2>✅ Төлбөр баталгаажлаа!</h2>
     <p>Таны үр дүн имэйлээр илгээгдлээ.</p>
     <button id="seeResultsBtn" class="see-results-btn">Үр дүнг харах</button>
   `;
-  // When "See Results" clicked → show new card
+
   document.getElementById("seeResultsBtn").addEventListener("click", () => {
-    showResultAfter(status, totalScore);
+    showPaidResult(status, totalScore);
   });
 }
-function showResultAfter(status, totalScore){  
+function showPaidResult(status, totalScore){  
   const { interpretation, explanation } = status;
   const scoreText = `${totalScore}/150`;
     let showRslt = document.getElementById("showRslt");
   if (!showRslt) {
-    showRslt = document.createElement("div");
-    showRslt.id = "showRslt";
-    document.body.appendChild(showRslt);
-  }
-    payComplete.classList.add("hidden");
-    showRslt.classList.remove("hidden");
-  
+    const showRslt = document.getElementById("showRslt");
+  showRslt.classList.remove("hidden");
+  document.getElementById("payComplete").classList.add("hidden");
   
     showRslt.innerHTML = `
       <h2 class="text-xl font-bold mb-2">Таны үр дүн 🎉</h2>
