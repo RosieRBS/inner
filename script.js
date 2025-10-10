@@ -447,8 +447,7 @@ function paymentComplete(status, totalScore){
 function showPaidResult(status, totalScore){  
   const { interpretation, explanation } = status;
   const scoreText = `${totalScore}/150`;
-    let showRslt = document.getElementById("showRslt");
-  if (!showRslt) {
+  
     const showRslt = document.getElementById("showRslt");
   showRslt.classList.remove("hidden");
   document.getElementById("payComplete").classList.add("hidden");
@@ -461,52 +460,3 @@ function showPaidResult(status, totalScore){
     `;
     showRslt.scrollIntoView({ behavior: "smooth" });
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
