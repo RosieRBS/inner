@@ -412,8 +412,8 @@ document.getElementById("cancelPay").addEventListener("click", () => qrPopup.rem
       const data = await check.json();
 
       if (data.paid) {
-  clearInterval(checkInterval);
-  hidePopup(); // Close QR popup if you have one
+  clearInterval(checkPayment);
+  qrPopup.remove(); // Close QR popup if you have one
 
   // Show "payment confirmed" message
   const messageBox = document.createElement("div");
@@ -457,6 +457,7 @@ document.getElementById("cancelPay").addEventListener("click", () => qrPopup.rem
 });
 
 }
+
 
 
 
