@@ -458,8 +458,7 @@ function showResultAfter(status, totalScore){
     showRslt.id = "showRslt";
     document.body.appendChild(showRslt);
   }
-  
-    document.getElementById("payComplete").classList.add("hidden");
+    payComplete.classList.add("hidden");
     showRslt.classList.remove("hidden");
   
   
@@ -471,6 +470,7 @@ function showResultAfter(status, totalScore){
     `;
     showRslt.scrollIntoView({ behavior: "smooth" });
 }
+
 
 
 
