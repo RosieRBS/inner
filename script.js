@@ -417,6 +417,15 @@ document.getElementById("cancelPay").addEventListener("click", () => qrPopup.rem
         emailMessage.textContent = "✅ Payment confirmed! Sending your results...";
         emailMessage.style.color = "green";
 
+          // Show result on screen
+  const resultContainer = document.getElementById("resultContainer");
+  resultContainer.innerHTML = `
+    <h2 class="text-xl font-bold mb-2">Таны үр дүн 🎉</h2>
+    <p><strong>Оноо:</strong> ${score}/150</p>
+    <p class="mt-2"><strong>Тайлбар:</strong> ${data.interpretation}</p>
+    <p class="mt-2 text-gray-600">${data.explanation}</p>
+  `;
+
         // Step 4: Send results after payment
         // const send = await fetch("/send-results", {
         //   method: "POST",
@@ -444,6 +453,7 @@ document.getElementById("cancelPay").addEventListener("click", () => qrPopup.rem
 });
 
 }
+
 
 
 
