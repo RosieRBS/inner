@@ -254,7 +254,7 @@ app.post("/check-payment", async (req, res) => {
       text,
     });
 
-    return res.json({ success: true, paid: true });
+    return res.json({ success: true, paid: true, interpretation, explanation });
   } catch (err) {
     console.error("❌ Check payment error:", err);
     res.status(500).json({ success: false, message: err.message });
@@ -412,6 +412,7 @@ app.listen(PORT, "0.0.0.0", () => {
 // ---------------------------
 // Start server
 // ---------------------------
+
 
 
 
