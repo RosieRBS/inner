@@ -410,43 +410,14 @@ document.getElementById("cancelPay").addEventListener("click", () => qrPopup.rem
 });
 
       const status = await check.json();
+      
 
       if (status.paid) {
-  clearInterval(checkPayment);
-  qrPopup.remove(); // Close QR popup if you have one
-
-  // Show "payment confirmed" message
-  const messageBox = document.createElement("div");
-  messageBox.className = "payment-success";
-  messageBox.innerHTML = `
-    <h2>✅ Төлбөр баталгаажлаа!</h2>
-    <p>Таны үр дүн имэйлээр илгээгдлээ.</p>
-    <button id="seeResultsBtn" class="see-results-btn">Үр дүнг харах</button>
-  `;
-  document.body.appendChild(messageBox);
-
-  // Store data for result card
-  const { interpretation, explanation } = status;
-  const scoreText = `${score}/150`;
-
-  // When "See Results" clicked → show new card
-  document.getElementById("seeResultsBtn").addEventListener("click", () => {
-    const existingCard = document.getElementById("resultCard");
-    if (existingCard) existingCard.remove();
-
-    const resultCard = document.createElement("div");
-    resultCard.id = "resultCard";
-    resultCard.className = "result-card";
-    resultCard.innerHTML = `
-      <h2 class="text-xl font-bold mb-2">Таны үр дүн 🎉</h2>
-      <p><strong>Оноо:</strong> ${scoreText}</p>
-      <p class="mt-2"><strong>Тайлбар:</strong> ${interpretation}</p>
-      <p class="mt-2 text-gray-600">${explanation}</p>
-    `;
-
-    document.body.appendChild(resultCard);
-    resultCard.scrollIntoView({ behavior: "smooth" });
-  });
+        const { interpretation, explanation } = status;
+        const scoreText = `${score}/150`;
+        clearInterval(checkPayment);
+        qrPopup.remove(); // Close QR popup if you have one
+        paymentComplete();
 }
     }, 5000);
   } catch (err) {
@@ -457,6 +428,33 @@ document.getElementById("cancelPay").addEventListener("click", () => qrPopup.rem
 });
 
 }
+
+function paymentComplete(){
+    resultCard.classList.add("hidden");
+    payComplete.classList.remove("hidden");
+    payComplete.innerHTML = `
+    <h2>✅ Төлбөр баталгаажлаа!</h2>
+    <p>Таны үр дүн имэйлээр илгээгдлээ.</p>
+    <button id="seeResultsBtn" class="see-results-btn">Үр дүнг харах</button>
+  `;
+  // When "See Results" clicked → show new card
+  document.getElementById("seeResultsBtn").addEventListener("click", () => {
+    showResult();
+  });
+}
+function showResult(){
+    payComplete.classList.add("hidden");
+    showRslt.classList.remove("hidden");
+  
+    showRslt.innerHTML = `
+      <h2 class="text-xl font-bold mb-2">Таны үр дүн 🎉</h2>
+      <p><strong>Оноо:</strong> ${scoreText}</p>
+      <p class="mt-2"><strong>Тайлбар:</strong> ${interpretation}</p>
+      <p class="mt-2 text-gray-600">${explanation}</p>
+    `;
+    resultCard.scrollIntoView({ behavior: "smooth" });
+}
+
 
 
 
