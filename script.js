@@ -136,7 +136,6 @@ function loadQuestion() {
     <p id="reminderText" class="reminder">Choose the option closest to you</p>
     ${contextHTML}
     ${imageHTML}
-    <p id="reminderText" class="reminder">${contextHTML} ${imageHTML}</p>
     <div id="choices" class="choices"></div>
     <div class="actions">
       <button id="prevBtn" class="btn-ghost" ${currentQuestion===0&&currentSection===0?"disabled":""}>Previous</button>
@@ -445,6 +444,7 @@ document.getElementById("cancelPay").addEventListener("click", () => qrPopup.rem
 });
 
 }
+
 
 
 
