@@ -117,6 +117,14 @@ function loadQuestion() {
   const section = sections[currentSection];
   const q = section.questions[currentQuestion];
 
+    const contextHTML = q.context
+    ? `<p class="question-context">${q.context}</p>`
+    : "";
+
+  const imageHTML = q.image
+    ? `<div class="question-image"><img src="${q.image}" alt="Question image"></div>`
+    : "";
+  
   quizCard.innerHTML = `
     <div class="progress">
       <div id="progressText">Question ${currentQuestion + 1} of ${section.questions.length}</div>
@@ -124,6 +132,8 @@ function loadQuestion() {
         <div id="progressFill" style="width:${(currentQuestion/section.questions.length)*100}%"></div>
       </div>
     </div>
+    ${contextHTML}
+    ${imageHTML}
     <h2 id="questionText">${q.text}</h2>
     <p id="reminderText" class="reminder">Choose the option closest to you</p>
     <div id="choices" class="choices"></div>
@@ -434,6 +444,7 @@ document.getElementById("cancelPay").addEventListener("click", () => qrPopup.rem
 });
 
 }
+
 
 
 
