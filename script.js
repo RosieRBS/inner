@@ -444,10 +444,10 @@ function paymentComplete(status, totalScore){
   `;
   // When "See Results" clicked → show new card
   document.getElementById("seeResultsBtn").addEventListener("click", () => {
-    showResult(status, totalScore);
+    showResultAfter(status, totalScore);
   });
 }
-function showResult(status, totalScore){  
+function showResultAfter(status, totalScore){  
   const { interpretation, explanation } = status;
   const scoreText = `${totalScore}/150`;
     let showRslt = document.getElementById("showRslt");
@@ -467,8 +467,9 @@ function showResult(status, totalScore){
       <p class="mt-2"><strong>Тайлбар:</strong> ${interpretation}</p>
       <p class="mt-2 text-gray-600">${explanation}</p>
     `;
-    resultCard.scrollIntoView({ behavior: "smooth" });
+    showRslt.scrollIntoView({ behavior: "smooth" });
 }
+
 
 
 
