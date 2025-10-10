@@ -414,9 +414,10 @@ document.getElementById("cancelPay").addEventListener("click", () => qrPopup.rem
 
       if (status.paid) {
         const { interpretation, explanation } = status;
+        clearInterval(checkPayment);
         qrPopup.remove(); // Close QR popup if you have one
         paymentComplete(status, answers.reduce((a, b) => a + b, 0));
-        clearInterval(checkPayment);
+
 }
     }, 5000);
   } catch (err) {
@@ -470,6 +471,7 @@ function showResultAfter(status, totalScore){
     `;
     showRslt.scrollIntoView({ behavior: "smooth" });
 }
+
 
 
 
